@@ -1,4 +1,5 @@
 import re, datetime
+from flask import jsonify, abort
 
 def normalize_date(date):
   try: 
@@ -26,3 +27,9 @@ def scrub_input(data):
     print("Not a valid data: data dropped!")
     data = -1
   return data
+  
+def getquery(title, data):
+   if len(data) == 0:
+    abort(400)
+   return jsonify({title: data}), 201
+  
