@@ -33,4 +33,6 @@ def getquery(title, data):
     abort(400)
    return jsonify({title: data}), 201
 
+
+def postquery(title, data):
 	

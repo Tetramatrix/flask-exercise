@@ -6,7 +6,26 @@ from flask_httpauth import HTTPBasicAuth
 server = Flask(__name__)
 db = Database()
 auth = HTTPBasicAuth()
-          
+
+def createbookmark(data):
+  bookmarks = []
+  date = normalize_date(data['date'])
+  title = scrub_input(data['title'])
+  url = scrub_input(data['uri'])
+  
+  if (date != -1 and title != -1 and url != -1):
+    result = db.insert("INSERT INTO data (url, title, date_added) VALUES (%s, %s, %s)", (url, title, date))
+    if (result != 1):
+      print(result)
+    
+    bookmark = {
+        'title': title,
+        'uri': url,
+        'date': date  
+    }
+    bookmarks.append(bookmark)
+  return bookmarks
+  
 @server.route("/")
 def index():
     return render_template('index.html')
@@ -32,27 +51,7 @@ def get_url(bookmark_url):
 def create_bookmark():
     if not request.json :
         abort(400)
-        
-    bookmarks = []
-    
-    for element in request.json:      
-      date = normalize_date(element['date'])
-      title = scrub_input(element['title'])
-      url = scrub_input(element['uri'])
-      
-      if (date != -1 and title != -1 and url != -1):
-        result = db.insert("INSERT INTO data (url, title, date_added) VALUES (%s, %s, %s)", (url, title, date))
-        if (result != 1):
-          print(result)
-        
-        bookmark = {
-            'title': title,
-            'uri': url,
-            'date': date  
-        }
-        bookmarks.append(bookmark)
-    
-    return jsonify({'bookmarks': bookmarks}), 201
+    return jsonify({'bookmarks': [createbookmark(element) for element in request.json]}), 201
       
 @server.errorhandler(404)
 def not_found(error):
@@ -61,7 +60,7 @@ def not_found(error):
 @auth.verify_password
 def authenticate(username, password):
     if username and password:
-      if username == 'admin' and password == '123':
+      if username == 'admin' and password == 'admin':
         return True
     else:
       return False
