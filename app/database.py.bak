@@ -34,16 +34,7 @@ class Database:
         cursor.close()
       except Exception as e:
        return e
-     return rows
-
-  def fetchallParams(self, query, params):
-     cursor = my_db.cursor()
-     try:
-      cursor.execute(query, (params))
-      rows=cursor.fetchall()
-      cursor.close()
-     except Exception as e:
-      return e
+     print(rows)  
      return rows
      
   def fetchone(self, query, params):
@@ -60,7 +51,7 @@ class Database:
     cursor = my_db.cursor()
     try:
       result=cursor.execute(query, (params))
-      db.commit()
+      my_db.commit()
       cursor.close()
     except Exception as e:
       return e

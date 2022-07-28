@@ -1,13 +1,16 @@
-from flask import Flask, render_template, make_response, request
+from flask import Flask, render_template, make_response, request, json
+from flask_restful import Api, Resource, reqparse
+from flask_httpauth import HTTPBasicAuth
 from database import *
 from utilities import *
-from flask_httpauth import HTTPBasicAuth
 
 server = Flask(__name__)
-db = Database()
+api = Api(server)
 auth = HTTPBasicAuth()
-
+db = Database()
+        
 def createbookmark(data):
+  bookmarks = []
   date = normalize_date(data['date'])
   title = scrub_input(data['title'])
   url = scrub_input(data['uri'])
@@ -29,28 +32,30 @@ def createbookmark(data):
 def index():
     return render_template('index.html')
 
-@server.route('/avaaz/api/v1.0/bookmarks', methods=['GET'])
-def get_bookmarks():
-    return getquery('bookmarks', db.fetchall("SELECT * from data", ""))
+class BookmarkListAPI(Resource):
+    def get(self):
+        result = db.fetchall("SELECT title,url,date_added from data", "")
+        return jsonify({'bookmarks':tostr.replace('"','')})
+        
+    def post(self):
+        pass
 
-@server.route('/avaaz/api/v1.0/bookmarks/<int:bookmark_id>', methods=['GET'])
-def get_id(bookmark_id):
-    return getquery('bookmark', db.fetchone("SELECT * from data WHERE id = %s", bookmark_id))
+class BookmarksAPI(Resource):
+    def get(self, id):
+        return jsonify({'bookmark':db.fetchone("SELECT id,title,url,date_added from data WHERE id = %s", id)})
 
-@server.route('/avaaz/api/v1.0/bookmarks/title/<string:bookmark_title>', methods=['GET'])
-def get_title(bookmark_title):
-    return getquery('bookmarks', db.fetchall("SELECT * from data where title Like %s", ("%"+bookmark_title+"%")))
+class BookmarksTitleAPI(Resource):
+    def get(self, title):
+        return jsonify({'bookmarks':db.fetchall("SELECT title,url,date_added from data where title Like %s", ("%"+title+"%"))})
 
-@server.route('/avaaz/api/v1.0/bookmarks/url/<string:bookmark_url>', methods=['GET'])
-def get_url(bookmark_url):
-    return getquery('bookmarks', db.fetchall("SELECT * from data where REPLACE(REPLACE(url,'http://',''),'https://','') Like %s", ("%"+bookmark_url+"%")))
-      
-@server.route('/avaaz/api/v1.0/bookmarks', methods=['POST'])
-@auth.login_required
-def create_bookmark():
-    if not request.json :
-        abort(400)
-    return jsonify({'bookmarks': [createbookmark(element) for element in request.json]}), 201
+class BookmarksUrlAPI(Resource):
+    def get(self, url):
+       return jsonify({'bookmarks':db.fetchall("SELECT title,url,date_added from data where REPLACE(REPLACE(url,'http://',''),'https://','') Like %s", ("%"+url+"%"))})
+
+api.add_resource(BookmarkListAPI, '/avaaz/api/v1.0/bookmarks', endpoint = 'bookmarks')
+api.add_resource(BookmarksAPI, '/avaaz/api/v1.0/bookmark/<int:id>', endpoint = 'bookmark')
+api.add_resource(BookmarksTitleAPI, '/avaaz/api/v1.0/bookmarks/title/<string:title>', endpoint = 'title')
+api.add_resource(BookmarksUrlAPI, '/avaaz/api/v1.0/bookmarks/url/<string:url>', endpoint = 'url')
       
 @server.errorhandler(404)
 def not_found(error):

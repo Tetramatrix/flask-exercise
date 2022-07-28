@@ -33,17 +33,7 @@ class Database:
         rows=cursor.fetchall()
         cursor.close()
       except Exception as e:
-       return e
-     return rows
-
-  def fetchallParams(self, query, params):
-     cursor = my_db.cursor()
-     try:
-      cursor.execute(query, (params))
-      rows=cursor.fetchall()
-      cursor.close()
-     except Exception as e:
-      return e
+       return e 
      return rows
      
   def fetchone(self, query, params):

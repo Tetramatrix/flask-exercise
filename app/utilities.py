@@ -32,5 +32,4 @@ def getquery(title, data):
    if len(data) == 0:
     abort(400)
    return jsonify({title: data}), 201
-
 	
