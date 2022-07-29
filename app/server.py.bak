@@ -9,8 +9,24 @@ from utilities import *
 server = Flask(__name__)
 api = Api(server)
 auth = HTTPBasicAuth()
+USER_DATA = {
+  "admin": "1234"
+}
 
-class BookmarkListAPI(Resource):
+#route to verify the password
+@auth.verify_password
+def verify(username, password):
+  if not(username and password):
+    return False
+  return USER_DATA.get(username) == password
+
+@auth.error_handler
+def unauthorized():
+    # return 403 instead of 401 to prevent browsers from displaying the default
+    # auth dialog
+    return make_response(jsonify({'message': 'Unauthorized access'}), 403)
+    
+class BookmarkListAPI(Resource):        
     def __init__(self):
         self.db = Database()
         self.getquery = "SELECT title,url,date_added from data"
@@ -20,8 +36,9 @@ class BookmarkListAPI(Resource):
         super(BookmarkListAPI, self).__init__()
 
     def get(self):
-        return jsonify({'bookmarks':[dict(zip(self.titles, entry)) for entry in self.db.fetchall(self.getquery, self.params)]})
-        
+        return jsonify({'bookmarks':[dict(zip(self.titles, entry)) for entry in self.db.fetchall(self.getquery, self.params)]})    
+ 		
+ 		@auth.login_required  
     def post(self):
        bookmarks = []
        for data in request.get_json(force=True):
@@ -86,9 +103,8 @@ class BookmarksDateAPI(Resource):
         self.titles = ['title','uri','date']
         super(BookmarksDateAPI, self).__init__() 
     
-    @use_kwargs(user_args, location="querystring")   
+    @use_args(user_args, location="querystring")   
     def get(self, args):
-        print(start)
         if (args['start'] == None and args['end'] == None):
           abort(400)
    
@@ -111,21 +127,13 @@ api.add_resource(BookmarksDateAPI, '/avaaz/api/v1.0/bookmarks/date', endpoint = 
 @server.route("/")
 def index():
     return render_template('index.html')
-
-
-      
+     
 @server.errorhandler(404)
 def not_found(error):
     return make_response(jsonify({'error': 'Not found'}), 404)
 
-@auth.verify_password
-def authenticate(username, password):
-    if username and password:
-      if username == 'admin' and password == 'admin':
-        return True
-    else:
-      return False
-    return False
 
+      
+      
 if __name__ == "__main__":
     server.run(host='0.0.0.0')

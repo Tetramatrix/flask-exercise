@@ -34,6 +34,9 @@ class Database:
         cursor.close()
       except Exception as e:
        return e 
+     
+     if (rows == None):
+      rows = ()
      return rows
      
   def fetchone(self, query, params):
@@ -44,6 +47,9 @@ class Database:
       cursor.close()
     except Exception as e:
       return e
+      
+    if (row == None):
+      row = ()
     return row
     
   def insert(self, query, params):
