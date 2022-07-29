@@ -11,16 +11,33 @@ auth = HTTPBasicAuth()
 class BookmarkListAPI(Resource):
     def __init__(self):
         self.db = Database()
-        self.query = "SELECT title,url,date_added from data"
+        self.getquery = "SELECT title,url,date_added from data"
         self.params = ""
+        self.postquery = "INSERT INTO data (url, title, date_added) VALUES (%s, %s, %s)"
         self.titles = ['title','uri','date']
         super(BookmarkListAPI, self).__init__()
 
     def get(self):
-        return jsonify({'bookmarks':[dict(zip(self.titles, entry)) for entry in self.db.fetchall(self.query, self.params)]})
+        return jsonify({'bookmarks':[dict(zip(self.titles, entry)) for entry in self.db.fetchall(self.getquery, self.params)]})
         
     def post(self):
-        pass
+       bookmarks = []
+       for data in request.get_json(force=True):
+         date = normalize_date(data['date'])
+         title = scrub_input(data['title'])
+         url = scrub_input(data['uri'])
+          
+         if (date != -1 and title != -1 and url != -1):
+          result = self.db.insert(self.postquery, (url, title, date))
+          if (result != 1):
+           print(result)
+          bookmark = {
+              'title': title,
+              'uri': url,
+              'date': date  
+          }
+          bookmarks.append(bookmark)        
+       return {'bookmarks':bookmarks}, 20
 
 class BookmarksAPI(Resource):
     def __init__(self):
@@ -43,7 +60,7 @@ class BookmarksTitleAPI(Resource):
         return jsonify({'bookmarks':[dict(zip(self.titles, entry)) for entry in self.db.fetchall(self.query, ("%"+title+"%"))]})
 
 class BookmarksUrlAPI(Resource):
-		def __init__(self):
+    def __init__(self):
         self.db = Database()
         self.query = "SELECT title,url,date_added from data where REPLACE(REPLACE(url,'http://',''),'https://','') Like %s"
         self.titles = ['title','uri','date']
@@ -57,25 +74,6 @@ api.add_resource(BookmarksAPI, '/avaaz/api/v1.0/bookmark/<int:id>', endpoint = '
 api.add_resource(BookmarksTitleAPI, '/avaaz/api/v1.0/bookmarks/title/<string:title>', endpoint = 'title')
 api.add_resource(BookmarksUrlAPI, '/avaaz/api/v1.0/bookmarks/url/<string:url>', endpoint = 'url')
 
-        
-def createbookmark(data):
-  bookmarks = []
-  date = normalize_date(data['date'])
-  title = scrub_input(data['title'])
-  url = scrub_input(data['uri'])
-  
-  if (date != -1 and title != -1 and url != -1):
-    result = db.insert("INSERT INTO data (url, title, date_added) VALUES (%s, %s, %s)", (url, title, date))
-    if (result != 1):
-      print(result)
-    
-    bookmark = {
-        'title': title,
-        'uri': url,
-        'date': date  
-    }
-    bookmarks.append(bookmark)
-  return bookmarks
   
 @server.route("/")
 def index():
