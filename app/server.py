@@ -8,6 +8,7 @@ from utilities import *
 
 server = Flask(__name__)
 api = Api(server)
+
 auth = HTTPBasicAuth()
 USER_DATA = {
   "admin": "1234"
@@ -132,8 +133,7 @@ def index():
 def not_found(error):
     return make_response(jsonify({'error': 'Not found'}), 404)
 
-
-      
+     
       
 if __name__ == "__main__":
     server.run(host='0.0.0.0')

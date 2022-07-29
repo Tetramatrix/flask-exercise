@@ -1,4 +1,5 @@
-import pymysql.cursors, os
+#import pymysql.cursors, os
+from flask_mysqldb import MySQL
 
 class Database:
   my_db = my_cursor = None
@@ -36,7 +37,7 @@ class Database:
        return e 
      
      if (rows == None):
-    	rows = ()
+      rows = ()
      return rows
      
   def fetchone(self, query, params):
@@ -49,7 +50,7 @@ class Database:
       return e
       
     if (row == None):
-    	row = ()
+      row = ()
     return row
     
   def insert(self, query, params):

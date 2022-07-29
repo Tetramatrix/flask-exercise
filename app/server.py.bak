@@ -8,6 +8,7 @@ from utilities import *
 
 server = Flask(__name__)
 api = Api(server)
+
 auth = HTTPBasicAuth()
 USER_DATA = {
   "admin": "1234"
@@ -37,8 +38,8 @@ class BookmarkListAPI(Resource):
 
     def get(self):
         return jsonify({'bookmarks':[dict(zip(self.titles, entry)) for entry in self.db.fetchall(self.getquery, self.params)]})    
- 		
- 		@auth.login_required  
+    
+    @auth.login_required  
     def post(self):
        bookmarks = []
        for data in request.get_json(force=True):
