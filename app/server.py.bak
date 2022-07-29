@@ -1,5 +1,7 @@
 from flask import Flask, render_template, make_response, request, json
-from flask_restful import Api, Resource, reqparse
+from flask_restful import Api, Resource
+from webargs import fields
+from webargs.flaskparser import use_args, use_kwargs, abort
 from flask_httpauth import HTTPBasicAuth
 from database import *
 from utilities import *
@@ -37,9 +39,9 @@ class BookmarkListAPI(Resource):
               'date': date  
           }
           bookmarks.append(bookmark)        
-       return {'bookmarks':bookmarks}, 20
+       return {'bookmarks':bookmarks}, 200
 
-class BookmarksAPI(Resource):
+class BookmarksAPI(Resource):     
     def __init__(self):
         self.db = Database()
         self.query = "SELECT id,title,url,date_added from data WHERE id = %s"
@@ -69,11 +71,42 @@ class BookmarksUrlAPI(Resource):
     def get(self, url):
        return jsonify({'bookmarks':[dict(zip(self.titles, entry)) for entry in self.db.fetchall(self.query, ("%"+url+"%"))]})
 
+class BookmarksDateAPI(Resource):
+     
+    user_args={
+      'start':fields.DateTime(required=False, missing=None),
+      'end':fields.DateTime(required=False, missing=None) 
+    }
+    
+    def __init__(self):
+        self.db = Database()
+        self.startquery = "SELECT title,url,date_added from data where date_added >= %s"
+        self.endquery = "SELECT title,url,date_added from data where date_added <= %s"
+        self.betweenquery = "SELECT title,url,date_added from data where date_added BETWEEN %s and %s"
+        self.titles = ['title','uri','date']
+        super(BookmarksDateAPI, self).__init__() 
+    
+    @use_kwargs(user_args, location="querystring")   
+    def get(self, args):
+        print(start)
+        if (args['start'] == None and args['end'] == None):
+          abort(400)
+   
+        if (args['start'] != None and args['end'] == None):
+          return jsonify({'bookmarks':[dict(zip(self.titles, entry)) for entry in self.db.fetchall(self.startquery, (args['start']))]})
+        
+        if (args['start'] == None and args['end'] != None):
+          return jsonify({'bookmarks':[dict(zip(self.titles, entry)) for entry in self.db.fetchall(self.endquery, (args['end']))]})
+        
+        if (args['start'] != None and args['end'] != None):
+          return jsonify({'bookmarks':[dict(zip(self.titles, entry)) for entry in self.db.fetchall(self.betweenquery, (args['start'], args['end']))]})
+        
+  
 api.add_resource(BookmarkListAPI, '/avaaz/api/v1.0/bookmarks', endpoint = 'bookmarks')
 api.add_resource(BookmarksAPI, '/avaaz/api/v1.0/bookmark/<int:id>', endpoint = 'bookmark')
 api.add_resource(BookmarksTitleAPI, '/avaaz/api/v1.0/bookmarks/title/<string:title>', endpoint = 'title')
 api.add_resource(BookmarksUrlAPI, '/avaaz/api/v1.0/bookmarks/url/<string:url>', endpoint = 'url')
-
+api.add_resource(BookmarksDateAPI, '/avaaz/api/v1.0/bookmarks/date', endpoint = 'date')
   
 @server.route("/")
 def index():
