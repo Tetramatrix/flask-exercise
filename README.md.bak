@@ -65,7 +65,7 @@ Submit your solution by sending a zipped file via email to your Avaaz recruiting
 
 2.1.1 Example to import bookmarks from a json source
 
-			This endpoint is password protected because it adds bookmarks to the database! In the application I have included a default user "admin" and password "password".	
+			This endpoint is password protected because it adds bookmarks to the database! In the application I have included a default user "admin" and password "password".			
 			
 			Open a browser console and copy and paste and execute:
 			

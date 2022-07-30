@@ -8,10 +8,10 @@ from utilities import *
 
 server = Flask(__name__)
 api = Api(server)
-
 auth = HTTPBasicAuth()
+
 USER_DATA = {
-  "admin": "1234"
+ "admin": "password"
 }
 
 #route to verify the password
@@ -120,7 +120,7 @@ class BookmarksDateAPI(Resource):
         
   
 api.add_resource(BookmarkListAPI, '/avaaz/api/v1.0/bookmarks', endpoint = 'bookmarks')
-api.add_resource(BookmarksAPI, '/avaaz/api/v1.0/bookmark/<int:id>', endpoint = 'bookmark')
+api.add_resource(BookmarksAPI, '/avaaz/api/v1.0/bookmarks/<int:id>', endpoint = 'bookmarks')
 api.add_resource(BookmarksTitleAPI, '/avaaz/api/v1.0/bookmarks/title/<string:title>', endpoint = 'title')
 api.add_resource(BookmarksUrlAPI, '/avaaz/api/v1.0/bookmarks/url/<string:url>', endpoint = 'url')
 api.add_resource(BookmarksDateAPI, '/avaaz/api/v1.0/bookmarks/date', endpoint = 'date')
@@ -133,8 +133,7 @@ def index():
 def not_found(error):
     return make_response(jsonify({'error': 'Not found'}), 404)
 
-
-      
+     
       
 if __name__ == "__main__":
     server.run(host='0.0.0.0')
