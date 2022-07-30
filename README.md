@@ -44,7 +44,7 @@ Submit your solution by sending a zipped file via email to your Avaaz recruiting
 
 ## Tutorial 
 
-1. The restful application has 5 endpoints:
+1. The application has 5 REST-API endpoints:
 	
 1.1 [get]   /avaaz/api/v1.0/bookmarks   							retrieve all bookmarks      
     [post]  /avaaz/api/v1.0/bookmarks  								create bookmarks from a json source
@@ -65,13 +65,13 @@ Submit your solution by sending a zipped file via email to your Avaaz recruiting
 
 2.1.1 Example to import bookmarks from a json source
 
-			This endpoint is password protected because it adds bookmarks to the database! In the application I have included a default user "admin" and password "password".	
+			This endpoint is password protected because it can add bookmarks to the database! In the application I have included a default user "admin" and password "password".	
 			
 			Open a browser console and copy and paste and execute:
 			
 			fetch('http://localhost:5000/avaaz/api/v1.0/bookmarks', {
 			  method: 'POST',
-			  headers: { 'Authorization': 'Basic ' + btoa("admin:password") },
+			  headers: { 'Authorization': 'Basic ' + btoa('admin:password') },
 			  body: JSON.stringify([{
 			      "title": "A arte de atingir seus objetivos simplesmente",
 			      "uri": "http://matthews-espinoza.com/",
@@ -86,10 +86,7 @@ Submit your solution by sending a zipped file via email to your Avaaz recruiting
 			      "title": "L'assurance de rouler \u00e0 sa source",
 			      "uri": "https://thierry.com/register/",
 			      "date": "05 Jan 1972"
-			    }] ),
-			  headers: {
-			    'Content-type': 'application/json; charset=UTF-8'
-			  }
+			    }] )  
 			})
 			.then(res => res.json())
 			.then(console.log);

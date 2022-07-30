@@ -11,7 +11,7 @@ api = Api(server)
 auth = HTTPBasicAuth()
 
 USER_DATA = {
- "admin": "password"
+ "admin" : "password"
 }
 
 #route to verify the password
