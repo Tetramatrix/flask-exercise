@@ -30,17 +30,29 @@ Submit your solution by sending a zipped file via email to your Avaaz recruiting
 ## Installation
 
 1. Unpack the .zip-Archive to your development machine or navigate to github (https://github.com/Tetramatrix/flask-exercise/tree/contribution) and clone with git. 
-2. Open a console and navigate to the folder "flask-exercise"
-3. edit the file .env to match your sql-database and save it:
+
+2. Open a console and navigate to the folder "flask-exercise".
+   Run virt\Scripts\activate.ps1 in Powershell or (source virt\Scripts\activate in Linux).
+   Your command prompt should change to (virt){path}\flask-exercise>. 
+  
+3. Then edit the file .env to match your sql-database and save it:
  		
  		MYSQL_HOST=
 		MYSQL_DB=
 		MYSQL_USER=
 		MYSQL_PWD=
 
-4. To start the application type "flask run" and press return
+4. To start the application type "python -m flask run" and press return. Example output:
 
-5. Open a browser and navigate to http://127.0.0.1:5000. It opens a page with the text "Welcome to Flask-Avaaz!" 
+ * Serving Flask app 'app\\server' (lazy loading)
+ * Environment: development
+ * Debug mode: on
+ * Running on http://127.0.0.1:5000 (Press CTRL+C to quit)
+ * Restarting with stat
+ * Debugger is active!
+ * Debugger PIN: 869-370-679
+
+5. Open a browser window and navigate to http://127.0.0.1:5000. It loads a page with the content  "Welcome to Flask-Avaaz!". Now you are ready to go!
 
 ## Tutorial 
 
@@ -65,14 +77,15 @@ Submit your solution by sending a zipped file via email to your Avaaz recruiting
 
 2.1.1 Example to import bookmarks from a json source
 
-			This endpoint is password protected because it adds bookmarks to the database! In the application I have included a default user "admin" and password "password".	
+			This endpoint is password protected because it can add bookmarks to the database! I have included a default user "admin" and password "password" in the application.	You can use it to authenticate for this endpoint. For example: 
 			
-			Open a browser console and copy and paste and execute:
+			Open a browser console and copy and paste the code and press return:
 			
 			fetch('http://localhost:5000/avaaz/api/v1.0/bookmarks', {
 			  method: 'POST',
 			  headers: { 'Authorization': 'Basic ' + btoa('admin:password') },
-			  body: JSON.stringify([{
+			  body: JSON.stringify([
+			    {
 			      "title": "A arte de atingir seus objetivos simplesmente",
 			      "uri": "http://matthews-espinoza.com/",
 			      "date": "2014-03-08T15"
@@ -88,26 +101,25 @@ Submit your solution by sending a zipped file via email to your Avaaz recruiting
 			      "date": "05 Jan 1972"
 			    }] )  
 			})
-			.then(res => res.json())
-			.then(console.log);
+			.then(res => res.json()).then(console.log);
 			
-			The application skips bookmarks with invalid title and url, e.g. empty title and url. 
+			The application skips bookmarks with invalid title and url, e.g. empty title and invalid url. 
 
 2.2   Example to retrieve a boommark by id
 		
-			Open a browser and copy and paste into the address bar:
+			Open a browser window and copy and paste into the address bar:
 		  http://localhost:5000/avaaz/api/v1.0/bookmarks/2
 		  or any number after ...title/
 		  	
 2.3   Example to retrieve a boommark by title
 
-	   	Open a browser and copy and paste into the address bar:
+	   	Open a browser window and copy and paste into the address bar:
 	   	http://localhost:5000/avaaz/api/v1.0/bookmarks/title/ta
 	   	or any string after ...title/
 	   	
 2.4   Example to retrieve a bookmark by url
 
-	   	Open a browser and copy and paste into the address bar:
+	   	Open a browser and window copy and paste into the address bar:
 	   	http://localhost:5000/avaaz/api/v1.0/bookmarks/url/am	   	
 			or any string after ...title/
 
@@ -130,7 +142,7 @@ Submit your solution by sending a zipped file via email to your Avaaz recruiting
 
 		Open a browser and copy and paste into the address bar:
 		http://localhost:5000/avaaz/api/v1.0/bookmarks/date?start=1950-03-03T00:00:00&end=2020-03-03T00:00:00
-     
+ 
+3. Quit Flask and virtual environment
 
-
-
+3.1 Press CTRL+C to quit Flask and type deactivate to quit 

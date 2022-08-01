@@ -10,7 +10,7 @@ def normalize_date(date):
     except: 
        match = re.search("\d{4}-\d{2}-\d{2}", date)
        if match is None:
-        print ("Not a valid date: data dropped!")
+        print ("Invalid date: data dropped!")
         date = -1
        if match is not None:
         print("Date confirmed: "+date)
@@ -23,8 +23,8 @@ def normalize_date(date):
   return date
 
 def scrub_input(data):
-  if (data == "null" or data == ""):
-    print("Not a valid data: data dropped!")
+  if (data == "null" or data == "" or data is None):
+    print("Invalid data: data dropped!")
     data = -1
   return data
   

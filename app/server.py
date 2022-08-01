@@ -1,8 +1,9 @@
 from flask import Flask, render_template, make_response, request, json
 from flask_restful import Api, Resource
 from webargs import fields
-from webargs.flaskparser import use_args, use_kwargs, abort
+from webargs.flaskparser import use_args, abort
 from flask_httpauth import HTTPBasicAuth
+import validators
 from database import *
 from utilities import *
 
@@ -46,7 +47,16 @@ class BookmarkListAPI(Resource):
          date = normalize_date(data['date'])
          title = scrub_input(data['title'])
          url = scrub_input(data['uri'])
-          
+         try:
+          valid=validators.url(url)
+         except:
+          print("Invalid url: data dropped!")
+          url = -1 
+         else:  
+          if valid != True:
+            print("Invalid url: data dropped!")
+            url = -1
+     
          if (date != -1 and title != -1 and url != -1):
           result = self.db.insert(self.postquery, (url, title, date))
           if (result != 1):

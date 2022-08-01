@@ -23,7 +23,7 @@ def normalize_date(date):
   return date
 
 def scrub_input(data):
-  if (data == "null" or data == ""):
+  if (data == "null" or data == "" or data is None):
     print("Not a valid data: data dropped!")
     data = -1
   return data
@@ -31,5 +31,5 @@ def scrub_input(data):
 def getquery(title, data):
    if len(data) == 0:
     abort(400)
-   return jsonify({title: data}), 201
+   return jsonify({title: data}), 200
 	
