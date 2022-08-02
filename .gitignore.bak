@@ -1,5 +1,4 @@
 .env
-.env.bak
 .venv
 generate_data.py
 Pipfile*
