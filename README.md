@@ -42,11 +42,6 @@ Submit your solution by sending a zipped file via email to your Avaaz recruiting
 		MYSQL_USER=
 		MYSQL_PWD=
 
-3.1 If you install from git you need to add these lines to the file .env:
-
-		FLASK_APP=app\server
-		FLASK_ENV=development
-
 4. To start the application type "python -m flask run" and press return. Example output:
 
  * Serving Flask app 'app\\server' (lazy loading)
