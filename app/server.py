@@ -4,6 +4,8 @@ from webargs import fields
 from webargs.flaskparser import use_args, abort
 from flask_httpauth import HTTPBasicAuth
 import validators, bleach
+from lxml.html import document_fromstring
+from lxml.html.clean import Cleaner
 from database import *
 from utilities import *
 
@@ -58,11 +60,18 @@ class BookmarkListAPI(Resource):
             url = -1
      
          if (date != -1 and title != -1 and url != -1):
+          title = document_fromstring(title)
+          cleaner = Cleaner()
+          cleaner.remove_unknown_tags=False
+          cleaner.javascript=True
+          cleaner.scripts=True
+          cleaner.remove_tags = ['p', 'a', 'div']
+          title = bleach.clean(cleaner.clean_html(title).text_content(), strip=True, strip_comments=True, css_sanitizer=True)
           result = self.db.insert(self.postquery, (url, title, date))
           if (result != 1):
            print(result)
           bookmark = {
-              'title': bleach.clean(title),
+              'title': title,
               'uri': url,
               'date': date  
           }
