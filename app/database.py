@@ -50,6 +50,7 @@ class Database:
       
     if (row == None):
       row = ()
+    print (row)     
     return row
     
   def insert(self, query, params):

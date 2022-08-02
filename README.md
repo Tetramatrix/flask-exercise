@@ -52,7 +52,7 @@ Submit your solution by sending a zipped file via email to your Avaaz recruiting
  * Debugger is active!
  * Debugger PIN: 869-370-679
 
-5. Open a browser window and navigate to http://127.0.0.1:5000. It loads a page with the content  "Welcome to Flask-Avaaz!". Now you are ready to go!
+5. Open a browser window and navigate to http://127.0.0.1:5000. It loads a page with the content "Welcome to Flask-Avaaz!". Congrats!
 
 ## Tutorial 
 
@@ -72,12 +72,12 @@ Submit your solution by sending a zipped file via email to your Avaaz recruiting
    	  
 2.1 Example to retrieve all bookmarks
 
-			Open a browser an copy and paste into the address bar:
+			Open a browser window and copy and paste into the address bar:
 			http://localhost:5000/avaaz/api/v1.0/bookmarks
 
 2.1.1 Example to import bookmarks from a json source
 
-			This endpoint is password protected because it can add bookmarks to the database! I have included a default user "admin" and password "password" in the application.	You can use it to authenticate for this endpoint. For example: 
+			This endpoint is password protected because it can add bookmarks to the database! I have included a default user "admin" and password "password" in the application. You should use it to authenticate for this endpoint. For example: 
 			
 			Open a browser console and copy and paste the code and press return:
 			
@@ -104,45 +104,59 @@ Submit your solution by sending a zipped file via email to your Avaaz recruiting
 			.then(res => res.json()).then(console.log);
 			
 			The application skips bookmarks with invalid title and url, e.g. empty title and invalid url. 
-
-2.2   Example to retrieve a boommark by id
+			If the request is succesful a list of the saved bookmarks and a HTTP 200 response code is returned.
+			In all other cases an empty list and a HTTP 200 response code is returned (for example an empty database).
+			
+2.2   Example to retrieve a bookmark by id
 		
 			Open a browser window and copy and paste into the address bar:
 		  http://localhost:5000/avaaz/api/v1.0/bookmarks/2
-		  or any number after ...title/
-		  	
-2.3   Example to retrieve a boommark by title
+		  or any number after ...bookmarks/
+		  If the request is succesful the bookmark and a HTTP 200 response code is returned.
+		  In all other cases a HTTP 404 response code is returned.
+		  		  	
+2.3   Example to retrieve a bookmark by title
 
 	   	Open a browser window and copy and paste into the address bar:
 	   	http://localhost:5000/avaaz/api/v1.0/bookmarks/title/ta
 	   	or any string after ...title/
+	   	If the request is succesful a list of the bookmarks and a HTTP 200 response code is returned.
+	   	In all other cases a HTTP 404 response code is returned.
 	   	
 2.4   Example to retrieve a bookmark by url
 
 	   	Open a browser and window copy and paste into the address bar:
 	   	http://localhost:5000/avaaz/api/v1.0/bookmarks/url/am	   	
-			or any string after ...title/
-
+			or any string after ...url/
+	   	If the request is succesful a list of the bookmarks and a HTTP 200 response code is returned.
+	   	In all other cases a HTTP 404 response code is returned.
+	   	
 2.5 Example to retrieve a bookmark by date
 
-		There are 3 posibilities: after, before and between. The application accepts the 2 datetime formats:
+		There are 3 posibilities: after, before and between. The application accepts the following 2 datetime formats:
 		YYYY-MM-DDThh:mm:ss.s and YYYY-MM-DDThh:mm:ss.sTZD, e.g 1920-06-01T00:00:00 or with TZ then url_encoded: 1917-08-07T12%3A09%3A23.555%2B01%3A00
 	
-2.5.1 Example to retrieve a bookmark after a specific date:
+2.5.1 Example to retrieve a list of bookmarks after a specific date:
 
 		Open a browser window and copy and paste into the address bar:
 		http://localhost:5000/avaaz/api/v1.0/bookmarks/date?start=1920-06-01T00:00:00
+		If the request is succesful a list of the bookmarks and a HTTP 200 response code is returned. An empty list is returned if the result is empty. 
+		In case the date format is wrong a HTTP 422 response code is returned.
 		
-2.5.2 Example to retrieve a bookmark before a specific date:		
+2.5.2 Example to retrieve a list of bookmarks before a specific date:		
 		
 		Open a browser window and copy and paste into the address bar:
 		http://localhost:5000/avaaz/api/v1.0/bookmarks/date?end=2010-12-01T00:00:00
+	  If the request is succesful a list of the bookmarks and a HTTP 200 response code is returned. An empty list is returned if the result is empty. 
+		In case the date format is wrong a HTTP 422 response code is returned.
 		
-2.5.3 Example to retrieve a bookmark between 2 specific dates:
+2.5.3 Example to retrieve a list bookmarks between 2 specific dates:
 
 		Open a browser window and copy and paste into the address bar:
 		http://localhost:5000/avaaz/api/v1.0/bookmarks/date?start=1950-03-03T00:00:00&end=2020-03-03T00:00:00
- 
+ 		If the request is succesful a list of the bookmarks and a HTTP 200 response code is returned. An empty list is returned if the result is empty. 
+	  In case the date format is wrong a HTTP 422 response code is returned.
+	  
 3. Quit Flask and virtual environment
 
-3.1 Press CTRL+C to quit Flask and type deactivate to quit 
+3.1 Press CTRL+C to quit Flask and type deactivate and press return to quit 

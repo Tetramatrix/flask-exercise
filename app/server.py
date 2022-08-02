@@ -3,7 +3,7 @@ from flask_restful import Api, Resource
 from webargs import fields
 from webargs.flaskparser import use_args, abort
 from flask_httpauth import HTTPBasicAuth
-import validators
+import validators, bleach
 from database import *
 from utilities import *
 
@@ -62,7 +62,7 @@ class BookmarkListAPI(Resource):
           if (result != 1):
            print(result)
           bookmark = {
-              'title': title,
+              'title': bleach.clean(title),
               'uri': url,
               'date': date  
           }
@@ -77,7 +77,10 @@ class BookmarksAPI(Resource):
         super(BookmarksAPI, self).__init__()
        
     def get(self, id):
-        return jsonify({'bookmark':[dict(zip(self.titles, self.db.fetchone(self.query, id)))]})
+        result = self.db.fetchone(self.query, (id))
+        if not result:
+          abort(404)
+        return jsonify({'bookmark':[dict(zip(self.titles, result))]})
 
 class BookmarksTitleAPI(Resource):
     def __init__(self):
@@ -87,7 +90,10 @@ class BookmarksTitleAPI(Resource):
         super(BookmarksTitleAPI, self).__init__()
     
     def get(self, title):
-        return jsonify({'bookmarks':[dict(zip(self.titles, entry)) for entry in self.db.fetchall(self.query, ("%"+title+"%"))]})
+        result = [dict(zip(self.titles, entry)) for entry in self.db.fetchall(self.query, ("%"+title+"%"))]
+        if not result:
+          abort(404)
+        return jsonify({'bookmarks':result})
 
 class BookmarksUrlAPI(Resource):
     def __init__(self):
@@ -97,7 +103,10 @@ class BookmarksUrlAPI(Resource):
         super(BookmarksUrlAPI, self).__init__() 
   
     def get(self, url):
-       return jsonify({'bookmarks':[dict(zip(self.titles, entry)) for entry in self.db.fetchall(self.query, ("%"+url+"%"))]})
+       result = [dict(zip(self.titles, entry)) for entry in self.db.fetchall(self.query, ("%"+url+"%"))]
+       if not result:
+          abort(404)
+       return jsonify({'bookmarks':result})
 
 class BookmarksDateAPI(Resource):
      
@@ -141,9 +150,9 @@ def index():
      
 @server.errorhandler(404)
 def not_found(error):
-    return make_response(jsonify({'error': 'Not found'}), 404)
+    return make_response(jsonify({'message': error.description}), 404)
 
-     
+
       
 if __name__ == "__main__":
     server.run(host='0.0.0.0')
