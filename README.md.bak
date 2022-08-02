@@ -159,4 +159,4 @@ Submit your solution by sending a zipped file via email to your Avaaz recruiting
 	  
 3. Quit Flask and virtual environment
 
-3.1 Press CTRL+C to quit Flask and type deactivate to quit 
+3.1 Press CTRL+C to quit Flask and type deactivate and press return to quit 
