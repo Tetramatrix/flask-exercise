@@ -1,4 +1,4 @@
-import pymysql.cursors, os
+import pymysql.cursors, os, sys
 
 class Database:
   my_db = my_cursor = None
@@ -11,7 +11,10 @@ class Database:
                                    password=os.environ.get('MYSQL_PWD'),
                                    database=os.environ.get('MYSQL_DB'))
     except Exception as e: 
-     return e
+    	try:
+    		sys.exit("Fatal database error! Program aborted:"+str(e))
+    	except Exception as e:
+    		sys.exit("Fatal database error! Program aborted:"+str(e))    		
     else:
       my_cursor = my_db.cursor()
   
