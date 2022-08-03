@@ -1,4 +1,4 @@
-import re, datetime
+import re, datetime, logging
 from flask import jsonify, abort
 
 def normalize_date(date):
@@ -10,21 +10,21 @@ def normalize_date(date):
     except: 
        match = re.search("\d{4}-\d{2}-\d{2}", date)
        if match is None:
-        print ("Not a valid date: data dropped!")
+        logging.error('%s raised an error: invalid date. Skipping data.',  date)
         date = -1
        if match is not None:
-        print("Date confirmed: "+date)
+        logging.info('Date confirmed: %s',  date)
     else: 
       date = datetime_object.strftime("%Y-%m-%d")
-      print("Date confirmed: "+date)
+      logging.info('Date confirmed: %s',  date)
   else:
    date = datetime_object.strftime("%Y-%m-%d")
-   print("Date confirmed: "+date)              
+   logging.info('Date confirmed: %s',  date)              
   return date
 
 def scrub_input(data):
   if (data == "null" or data == "" or data is None):
-    print("Not a valid data: data dropped!")
+    logging.error('%s raised an error: invalid data. Skipping data.',  data)
     data = -1
   return data
   

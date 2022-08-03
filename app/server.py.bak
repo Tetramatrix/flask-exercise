@@ -3,7 +3,7 @@ from flask_restful import Api, Resource
 from webargs import fields
 from webargs.flaskparser import use_args, abort
 from flask_httpauth import HTTPBasicAuth
-import validators, bleach
+import validators, bleach, logging
 from lxml.html import document_fromstring
 from lxml.html.clean import Cleaner
 from database import *
@@ -12,6 +12,7 @@ from utilities import *
 server = Flask(__name__)
 api = Api(server)
 auth = HTTPBasicAuth()
+logging.basicConfig(format='%(asctime)s - %(message)s', datefmt='%d-%b-%y %H:%M:%S')
 
 USER_DATA = {
  "admin" : "password"
@@ -52,24 +53,24 @@ class BookmarkListAPI(Resource):
          try:
           valid=validators.url(url)
          except:
-          print("Invalid url: data dropped!")
+          logging.error('%s raised an error: invalid url. Skipping data.',  url)
           url = -1 
          else:  
           if valid != True:
-            print("Invalid url: data dropped!")
+            logging.error('%s raised an error: invalid url. Skipping data.',  url)
             url = -1
      
          if (date != -1 and title != -1 and url != -1):
           title = document_fromstring(title)
           cleaner = Cleaner()
-          cleaner.remove_unknown_tags=True
+          cleaner.remove_unknown_tags=False
           cleaner.javascript=True
           cleaner.scripts=True
           cleaner.remove_tags = ['p', 'a', 'div']
           title = bleach.clean(cleaner.clean_html(title).text_content(), strip=True, strip_comments=True, css_sanitizer=True)
           result = self.db.insert(self.postquery, (url, title, date))
           if (result != 1):
-           print(result)
+           logging.error('Database query error: %s', result)
           bookmark = {
               'title': title,
               'uri': url,

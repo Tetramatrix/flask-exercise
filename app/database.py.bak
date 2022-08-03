@@ -12,9 +12,11 @@ class Database:
                                    database=os.environ.get('MYSQL_DB'))
     except Exception as e: 
     	try:
+    		logging.error("Exception occurred", exc_info=True)
     		sys.exit("Fatal database error! Program aborted:"+str(e))
     	except Exception as e:
-    		print (e) 
+    		logging.error("Exception occurred", exc_info=True)
+    		sys.exit("Fatal database error! Program aborted:"+str(e))    		
     else:
       my_cursor = my_db.cursor()
   
@@ -29,6 +31,7 @@ class Database:
         rows=cursor.fetchall()
         cursor.close()
        except Exception as e:
+       	logging.error("Exception occurred", exc_info=True)
         return e
      else:
       try:
@@ -36,6 +39,7 @@ class Database:
         rows=cursor.fetchall()
         cursor.close()
       except Exception as e:
+       logging.error("Exception occurred", exc_info=True)
        return e 
      
      if (rows == None):
@@ -49,6 +53,7 @@ class Database:
       row=cursor.fetchone()
       cursor.close()
     except Exception as e:
+    	logging.error("Exception occurred", exc_info=True)
       return e
       
     if (row == None):
@@ -63,5 +68,6 @@ class Database:
       my_db.commit()
       cursor.close()
     except Exception as e:
+    	logging.error("Exception occurred", exc_info=True)
       return e
     return result
